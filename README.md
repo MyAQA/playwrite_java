@@ -8,5 +8,11 @@ This is a simple test framework with only one direct purpose - investigate and p
 - playwright
 - TestNG
 
+## Preconditions:
+- Install playwright browsers: 
+````
+   mvn exec:java -e -D exec.mainClass="com.microsoft.playwright.CLI" -D exec.args="install msedge"
+````
+
 ## Resources:
 - https://demoqa.com/
