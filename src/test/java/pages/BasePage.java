@@ -21,7 +21,7 @@ public class BasePage {
         try {
             page.locator(locator).click();
         } catch(Throwable error) {
-
+            log.error(String.format("Did not manage to do click on element: {%s}, faced error: {%s}", locator, error.getMessage()));
         }
     }
 }
