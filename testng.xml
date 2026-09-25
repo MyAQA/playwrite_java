@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="PlaywrightSuite" parallel="classes" thread-count="2">
+
+    <test name="MainTests">
+        <parameter name="browser" value="FIREFOX"/>
+        <parameter name="headless" value="false"/>
+
+        <classes>
+            <class name="tests.PlaceholderMain"/>
+        </classes>
+    </test>
+
+</suite>
