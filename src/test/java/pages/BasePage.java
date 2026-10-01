@@ -4,15 +4,21 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import lombok.extern.slf4j.Slf4j;
+import pages.components.LeftNavigationMenu;
 
 @Slf4j
 public class BasePage {
 
     protected final Page page;
     private static final double DEFAULT_TIMEOUT_MS = 10_000;
+    public LeftNavigationMenu leftMenu;
 
     public BasePage(Page page) {
         this.page = page;
+
+        if (leftMenu == null ) {
+           leftMenu = new LeftNavigationMenu(page);
+        }
     }
 
     public void navigateTo(String url) {
@@ -52,7 +58,7 @@ public class BasePage {
                 .setTimeout(DEFAULT_TIMEOUT_MS));
     }
 
-    protected void waitForUrlContains(String fragment) {
+    public void waitForUrlContains(String fragment) {
         page.waitForURL(url -> url.contains(fragment));
     }
 
