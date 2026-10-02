@@ -3,7 +3,6 @@ package tests.student_registration_form_tests;
 import base.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import models.User;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import pages.LandingPage;
 import pages.PracticeFormPage;
@@ -15,7 +14,8 @@ import static utils.Constants.baseUrl;
 public class StudentRegFormTestsPositive extends BaseTest {
 
     @Test
-    public void addStudentInFormFullData() throws InterruptedException {
+    public void addStudentInFormFullData() {
+        log.info("Start of the test.");
         getPage().navigate(baseUrl);
 
         LandingPage landingPage = new LandingPage(getPage());
@@ -30,6 +30,7 @@ public class StudentRegFormTestsPositive extends BaseTest {
         practiceFormPage.clickSubmit();
 
         assertEquals(practiceFormPage.getFormsWithErrors().count(), 0);
+        practiceFormPage.checkIfThanksModalAppeared();
 
     }
 

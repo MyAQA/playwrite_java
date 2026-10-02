@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import models.User;
 import utils.StatesCities;
 
+import java.util.Random;
+
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 @Slf4j
@@ -30,6 +33,8 @@ public class PracticeFormPage extends BasePage {
     private static final String STATE_DROPDOWN = "//input[@id='react-select-3-input']";
     private static final String CITY_DROPDOWN = "//input[@id='react-select-4-input']";
     private static final String SUBMIT_BTN = "//button[@id='submit']";
+    private static final String THANKS_SUBMITING_FORM_MODAL = ".modal-content";
+    private static final String MODAL_WINDOW_HEADER = "Thanks for submitting the form";
 
     private static final String FORMS_WITH_ERRORS = ".form-control:invalid";
 
@@ -76,8 +81,12 @@ public class PracticeFormPage extends BasePage {
         System.out.println("Implement later");
     }
 
-    public void inputSubject(String subject) {
-        type(SUBJECT_INPUT, subject);
+    public void selectSubject(String subject) {
+       type(SUBJECT_INPUT, subject);
+        page.locator(".subjects-auto-complete__option")
+                .filter(new Locator.FilterOptions().setHasText(subject))
+                .first()
+                .click();
     }
 
     public void inputAddress(String address) {
@@ -103,13 +112,15 @@ public class PracticeFormPage extends BasePage {
 
     }
 
-    public void selectCity(StatesCities city) {
+    public void selectCity(StatesCities.City city) {
         super.click(CITY_DROPDOWN);
         super.type(CITY_DROPDOWN, city.getName());
         page.locator(CITY_DROPDOWN).fill(city.getName());
-        page.locator("div[id^='react-select-3-option']")
+        page.locator("#city div[id*='-option-']")
                 .filter(new Locator.FilterOptions().setHasText(city.getName()))
+                .first()
                 .click();
+
     }
 
     public void clickSubmit() {
@@ -123,13 +134,25 @@ public class PracticeFormPage extends BasePage {
         selectSexRadio(user.sex());
         phoneInput(user.phoneNumbe());
         selectDOB(user.dob());
-        inputSubject(user.subject());
+        selectSubject(user.subject().get(new Random().nextInt(user.subject().size())));
         inputAddress(user.getAddress());
         selectHobbies(user.hobby().getName());
+        selectState(user.state());
+        selectCity(user.city());
+
     }
 
     public Locator getFormsWithErrors() {
         return page.locator(FORMS_WITH_ERRORS);
+    }
+
+    public void checkIfThanksModalAppeared() {
+        log.info("Checking that the 'Thanks for submitting the form' modal appeared");
+        Locator modalWindow = page.locator(THANKS_SUBMITING_FORM_MODAL);
+        assertTrue(modalWindow.isVisible());
+        log.debug("Modal [{}] is visible", THANKS_SUBMITING_FORM_MODAL);
+        assertEquals(modalWindow.locator("[class='modal-header']").innerText(), MODAL_WINDOW_HEADER);
+        log.debug("Modal header matches expected text: '{}'", MODAL_WINDOW_HEADER);
     }
 
 }

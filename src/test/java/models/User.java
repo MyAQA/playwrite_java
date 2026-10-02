@@ -4,8 +4,10 @@ import com.github.javafaker.Faker;
 import utils.Hobbies;
 import utils.StatesCities;
 
+import java.util.List;
 
-public record User(String firstName, String lastName, String email, String phoneNumbe, String subject,
+
+public record User(String firstName, String lastName, String email, String phoneNumbe, List<String> subject,
                    StatesCities state,
                    String country, StatesCities.City city, String street, String house, String postCode, String dob,
                    String sex, Hobbies hobby) {
@@ -22,8 +24,25 @@ public record User(String firstName, String lastName, String email, String phone
 
     public static User getGeneratedUser() {
         Faker fvk = new Faker();
+        String firstName = fvk.name().firstName();
+        String lastName = fvk.name().lastName();
+        String email = firstName + "_" + lastName + System.currentTimeMillis() + "@" + fvk.internet().domainWord() + ".com";
+        List<String> subjects = List.of("Maths",
+                "Physics",
+                "Chemistry",
+                "English",
+                "Hindi",
+                "Biology",
+                "Computer Science",
+                "Commerce",
+                "Accounting",
+                "Economics",
+                "Arts",
+                "Social Studies",
+                "History",
+                "Civics");
 
-        return new User(fvk.name().firstName(), fvk.name().lastName(), fvk.internet().emailAddress(), fvk.phoneNumber().toString(), fvk.company().catchPhrase(), StatesCities.HARYANA,
+        return new User(firstName, lastName, email, fvk.numerify("##########"), subjects, StatesCities.HARYANA,
                 fvk.address().country(), StatesCities.HARYANA.getCities().get(1), fvk.address().streetName(), fvk.address().buildingNumber(), fvk.address().zipCode(),
                 fvk.date().birthday().toString(), fvk.demographic().sex(), Hobbies.MUSIC);
 
