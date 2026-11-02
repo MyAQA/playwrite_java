@@ -133,14 +133,13 @@ public class PracticeFormPage extends BasePage {
         lastNameInput(user.lastName());
         emailInput(user.email());
         selectSexRadio(user.sex());
-        phoneInput(user.phoneNumbe());
+        phoneInput(user.phoneNumber());
         selectDOB(user.dob());
         selectSubject(user.subject().get(new Random().nextInt(user.subject().size())));
         inputAddress(user.getAddress());
         selectHobbies(user.hobby().getName());
         selectState(user.state());
         selectCity(user.city());
-
     }
 
     public Locator getFormsWithErrors() {
@@ -154,6 +153,13 @@ public class PracticeFormPage extends BasePage {
         log.debug("Modal [{}] is visible", THANKS_SUBMITING_FORM_MODAL);
         assertEquals(modalWindow.locator("[class='modal-header']").innerText(), MODAL_WINDOW_HEADER);
         log.debug("Modal header matches expected text: '{}'", MODAL_WINDOW_HEADER);
+    }
+
+    public boolean isGenderRadioHasError() {
+        boolean isMaleHasError = (boolean) page.locator(MALE_RADIO_BTN).evaluate("el => el.validity.valueMissing");
+        boolean isFemaleHasError = (boolean) page.locator(FEMALE_RADIO_BTN).evaluate("el => el.validity.valueMissing");
+        boolean isOtherHasError = (boolean) page.locator(OTHER_RADIO_BTN).evaluate("el => el.validity.valueMissing");
+        return isMaleHasError && isFemaleHasError && isOtherHasError;
     }
 
 }
