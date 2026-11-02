@@ -23,6 +23,7 @@ public class StudentRegFormTestsPositive extends BaseTest {
         landingPage.openFormsPage();
         PracticeFormPage practiceFormPage = landingPage.leftMenu.openPracticeForm();
         practiceFormPage.waitForUrlContains(practiceFormPage.PRACTICE_FORM_URL_PART);
+        practiceFormPage.refreshPage();
 
         User user1 = User.getGeneratedUser();
         log.debug("Created test user for testing form: {}", user1);

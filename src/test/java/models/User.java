@@ -4,7 +4,10 @@ import com.github.javafaker.Faker;
 import utils.Hobbies;
 import utils.StatesCities;
 
+
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 
 public record User(String firstName, String lastName, String email, String phoneNumbe, List<String> subject,
@@ -44,7 +47,7 @@ public record User(String firstName, String lastName, String email, String phone
 
         return new User(firstName, lastName, email, fvk.numerify("##########"), subjects, StatesCities.HARYANA,
                 fvk.address().country(), StatesCities.HARYANA.getCities().get(1), fvk.address().streetName(), fvk.address().buildingNumber(), fvk.address().zipCode(),
-                fvk.date().birthday().toString(), fvk.demographic().sex(), Hobbies.MUSIC);
+                new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(fvk.date().birthday()), fvk.demographic().sex(), Hobbies.MUSIC);
 
     }
 }
