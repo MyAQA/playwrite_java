@@ -23,7 +23,6 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
     private static final ExtentReports extentRep =
             ExtentManager.createInstance(Paths.get(REPORTS_DIR, fileName).toString());
 
-    // One ExtentTest per thread, because the suite runs classes in parallel.
     private static final ThreadLocal<ExtentTest> testReport = new ThreadLocal<>();
 
     public static ExtentTest getExtent() {
@@ -78,7 +77,6 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
                 + " @TestCase : " + testResult.getMethod().getMethodName());
     }
 
-    // A test skipped because of a failed configuration method never gets onTestStart.
     private static ExtentTest getOrCreateTest(ITestResult testResult) {
         ExtentTest test = testReport.get();
         return test != null ? test : createTest(testResult);

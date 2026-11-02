@@ -62,11 +62,19 @@ public class BasePage {
         page.waitForURL(url -> url.contains(fragment));
     }
 
+    public void refreshPage() {
+        page.reload();
+    }
+
     public String getTitle() {
         return page.title();
     }
 
     public String getCurrentUrl() {
         return page.url();
+    }
+
+    public boolean isLocatorVisible(String locator) {
+       return page.locator(locator).isVisible();
     }
 }

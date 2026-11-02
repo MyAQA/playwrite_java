@@ -78,7 +78,8 @@ public class PracticeFormPage extends BasePage {
     }
 
     public void selectDOB(String dob) {
-        System.out.println("Implement later");
+        type(DOB_INPUT, dob);
+        page.keyboard().press("Enter");
     }
 
     public void selectSubject(String subject) {
