@@ -7,6 +7,8 @@ import com.microsoft.playwright.Playwright;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
+import utils.reporting.ExtentListeners;
+import utils.reporting.ScreenshotsUtil;
 
 @Slf4j
 public class BaseTest {
@@ -15,6 +17,7 @@ public class BaseTest {
 
     protected static final ThreadLocal<BrowserContext> contextThreadLocal = new ThreadLocal<>();
     protected static final ThreadLocal<Page> pageThreadLocal = new ThreadLocal<>();
+    private boolean maximized;
 
     @BeforeClass(alwaysRun = true)
     @Parameters({"browser", "headless"})
@@ -25,13 +28,20 @@ public class BaseTest {
         BrowserEnum browserSelected = BrowserEnum.valueOf(browserName.toUpperCase());
         Browser browser = BrowserFactory.createBrowser(playwright, browserSelected, headless);
         browserThreadLocal.set(browser);
+        maximized = BrowserFactory.isMaximizable(browserSelected, headless);
 
         log.info("Browser [{}] launched (headless={}) on thread {}", browserName, headless, Thread.currentThread().getId());
     }
 
     @BeforeMethod(alwaysRun = true)
     public void setUpContext() {
-        BrowserContext context = browserThreadLocal.get().newContext();
+        Browser.NewContextOptions options = new Browser.NewContextOptions();
+        if (maximized) {
+            options.setViewportSize(null);
+        } else {
+            options.setViewportSize(1920, 1080);
+        }
+        BrowserContext context = browserThreadLocal.get().newContext(options);
         contextThreadLocal.set(context);
         pageThreadLocal.set(context.newPage());
     }
@@ -45,8 +55,14 @@ public class BaseTest {
         Page page = pageThreadLocal.get();
 
         if (result.getStatus() == ITestResult.FAILURE && page != null) {
-            // might add screenshots here
-            log.error("Test Scenario: {} failed.", result.getTestName());
+            String testName = result.getMethod().getMethodName();
+            log.error("Test Scenario: {} failed.", testName);
+            try {
+                byte[] png = ScreenshotsUtil.capture(page, testName);
+                ExtentListeners.attachScreenshot(png, "Screenshot on failure");
+            } catch (Exception e) {
+                log.warn("Could not take screenshot for {}: {}", testName, e.getMessage());
+            }
         }
 
         if (page != null) {
@@ -55,7 +71,7 @@ public class BaseTest {
         }
 
         BrowserContext context = contextThreadLocal.get();
-        if(context != null) {
+        if (context != null) {
             context.close();
             contextThreadLocal.remove();
         }

@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import pages.LandingPage;
 import pages.PracticeFormPage;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.*;
 import static utils.Constants.baseUrl;
 
 @Slf4j
@@ -32,6 +32,28 @@ public class StudentRegFormTestsPositive extends BaseTest {
 
         assertEquals(practiceFormPage.getFormsWithErrors().count(), 0);
         practiceFormPage.checkIfThanksModalAppeared();
+
+    }
+
+    // Intentionally failing test to demonstrate screenshots on failure.
+    @Test
+    public void addStudentNoFirstNameExpectedFail() {
+        log.info("Start of the test.");
+        getPage().navigate(baseUrl);
+
+        LandingPage landingPage = new LandingPage(getPage());
+
+        landingPage.openFormsPage();
+        PracticeFormPage practiceFormPage = landingPage.leftMenu.openPracticeForm();
+        practiceFormPage.waitForUrlContains(practiceFormPage.PRACTICE_FORM_URL_PART);
+        practiceFormPage.refreshPage();
+
+        User noGenderUser = User.withFirstName("");
+        log.debug("Created test user for testing form: {}", noGenderUser);
+        practiceFormPage.fillInUserFormWithGivenObject(noGenderUser);
+        practiceFormPage.clickSubmit();
+
+        assertEquals(practiceFormPage.getFormsWithErrors().count(), 0);
 
     }
 
