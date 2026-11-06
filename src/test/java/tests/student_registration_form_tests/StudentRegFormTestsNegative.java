@@ -77,7 +77,6 @@ public class StudentRegFormTestsNegative extends BaseTest {
         practiceFormPage.clickSubmit();
 
         assertTrue(practiceFormPage.isGenderRadioHasError());
-        System.out.println("Pause");
     }
 
 }

@@ -2,6 +2,7 @@ package utils.reporting;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
@@ -14,6 +15,7 @@ import org.testng.ITestResult;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 public class ExtentListeners implements ITestListener, ISuiteListener {
     private static final String REPORTS_DIR = "reports";
@@ -40,7 +42,6 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
         String logText = "<b>" + "TEST CASE:- " + methodName.toUpperCase() + " PASSED" + "</b>";
         Markup m = MarkupHelper.createLabel(logText, ExtentColor.GREEN);
         getOrCreateTest(testResult).pass(m);
-        testReport.remove();
     }
 
     @Override
@@ -55,7 +56,6 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
 
         Markup m = MarkupHelper.createLabel(logText, ExtentColor.RED);
         test.log(Status.FAIL, m);
-        testReport.remove();
     }
 
     @Override
@@ -64,7 +64,6 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
         String logText = "<b>" + "TEST CASE:- " + methodName.toUpperCase() + " SKIP" + "</b>";
         Markup m = MarkupHelper.createLabel(logText, ExtentColor.YELLOW);
         getOrCreateTest(testResult).skip(m);
-        testReport.remove();
     }
 
     @Override
@@ -80,5 +79,14 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
     private static ExtentTest getOrCreateTest(ITestResult testResult) {
         ExtentTest test = testReport.get();
         return test != null ? test : createTest(testResult);
+    }
+
+    public static void attachScreenshot(byte[] png, String title) {
+        ExtentTest test = testReport.get();
+        if (test == null) {
+            return;
+        }
+        String base64 = Base64.getEncoder().encodeToString(png);
+        test.info(title, MediaEntityBuilder.createScreenCaptureFromBase64String(base64, title).build());
     }
 }

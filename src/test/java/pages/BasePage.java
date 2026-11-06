@@ -5,6 +5,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import lombok.extern.slf4j.Slf4j;
 import pages.components.LeftNavigationMenu;
+import utils.reporting.ExtentListeners;
+import utils.reporting.ScreenshotsUtil;
 
 @Slf4j
 public class BasePage {
@@ -16,8 +18,8 @@ public class BasePage {
     public BasePage(Page page) {
         this.page = page;
 
-        if (leftMenu == null ) {
-           leftMenu = new LeftNavigationMenu(page);
+        if (leftMenu == null) {
+            leftMenu = new LeftNavigationMenu(page);
         }
     }
 
@@ -33,8 +35,8 @@ public class BasePage {
             waitForVisible(element);
             page.locator(locator).click();
             log.debug("Clicked {}", locator);
-        } catch(Throwable error) {
-            log.error("Failed to click on element [{}]: {}",locator, error.getMessage());
+        } catch (Throwable error) {
+            log.error("Failed to click on element [{}]: {}", locator, error.getMessage());
             throw error;
         }
     }
@@ -75,6 +77,11 @@ public class BasePage {
     }
 
     public boolean isLocatorVisible(String locator) {
-       return page.locator(locator).isVisible();
+        return page.locator(locator).isVisible();
+    }
+
+    public void takeScreenshot(String name) {
+        byte[] png = ScreenshotsUtil.capture(page, name);
+        ExtentListeners.attachScreenshot(png, name);
     }
 }

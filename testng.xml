@@ -7,7 +7,7 @@
     </listeners>
 
     <test name="MainTests">
-        <parameter name="browser" value="FIREFOX"/>
+        <parameter name="browser" value="EDGE"/>
         <parameter name="headless" value="false"/>
 
         <classes>
