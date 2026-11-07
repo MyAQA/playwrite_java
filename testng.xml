@@ -13,6 +13,7 @@
         <classes>
             <class name="tests.student_registration_form_tests.StudentRegFormTestsPositive"/>
             <class name="tests.student_registration_form_tests.StudentRegFormTestsNegative"/>
+            <class name="tests.upload_download_tests.UploadDownloadTests"/>
         </classes>
     </test>
 

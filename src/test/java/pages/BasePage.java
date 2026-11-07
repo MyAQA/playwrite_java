@@ -1,5 +1,6 @@
 package pages;
 
+import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
@@ -8,12 +9,17 @@ import pages.components.LeftNavigationMenu;
 import utils.reporting.ExtentListeners;
 import utils.reporting.ScreenshotsUtil;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Slf4j
 public class BasePage {
 
     protected final Page page;
     private static final double DEFAULT_TIMEOUT_MS = 10_000;
     public LeftNavigationMenu leftMenu;
+
+    private static final Path DOWNLOAD_DIR = Paths.get("target", "downloads");
 
     public BasePage(Page page) {
         this.page = page;
@@ -83,5 +89,36 @@ public class BasePage {
     public void takeScreenshot(String name) {
         byte[] png = ScreenshotsUtil.capture(page, name);
         ExtentListeners.attachScreenshot(png, name);
+    }
+
+    protected void waitForAttached(Locator locator) {
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(DEFAULT_TIMEOUT_MS));
+    }
+
+    public void uploadFile(String locator, Path file) {
+        try {
+            Locator input = page.locator(locator);
+            waitForAttached(input);
+            input.setInputFiles(file);
+            log.debug("Uploaded file [{}] into: {}", file.toAbsolutePath(), locator);
+        } catch(Throwable error) {
+            log.error("Failed to upload file [{}] into [{}]: {}", file, locator, error.getMessage());
+            throw error;
+        }
+    }
+
+    public Path downloadFile(String locator) {
+        Download download = page.waitForDownload(() -> click(locator));
+
+        String failure = download.failure();
+        if(failure != null) {
+            log.error("Download from [{}] failed: {}", locator, failure);
+            throw new IllegalStateException("Download failed: " + failure);
+        }
+
+        Path savedFile = DOWNLOAD_DIR.resolve(download.suggestedFilename());
+        download.saveAs(savedFile);
+        log.debug("Downloaded file saved to: {}", savedFile.toAbsolutePath());
+        return savedFile;
     }
 }
