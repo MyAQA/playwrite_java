@@ -4,11 +4,13 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import lombok.AllArgsConstructor;
 import pages.PracticeFormPage;
+import pages.UploadDownloadPage;
 
 @AllArgsConstructor
 public class LeftNavigationMenu {
 
     private static final String FORM_PRACTICE_FORM = "//a[@href='/automation-practice-form']";
+    private static final String UPLOAD_DOWNLOAD_EL = "//a[@href='/upload-download']";
 
     private final Page page;
 
@@ -22,8 +24,17 @@ public class LeftNavigationMenu {
         if (!practiceForm.isVisible()) {
             expandGroup(MenuGroup.FORMS);
         }
-        page.locator(FORM_PRACTICE_FORM).click();
+        practiceForm.click();
         return new PracticeFormPage(page);
+    }
+
+    public UploadDownloadPage openUploadDownloadPage() {
+        Locator uploadDownloadEl = page.locator(UPLOAD_DOWNLOAD_EL);
+        if(!uploadDownloadEl.isVisible()) {
+            expandGroup(MenuGroup.ELEMENTS);
+        }
+        uploadDownloadEl.click();
+        return new UploadDownloadPage(page);
     }
 
 }
