@@ -14,6 +14,7 @@ import java.util.Random;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 import static utils.Constants.baseUrl;
+import static utils.reporting.ExtentSteps.step;
 
 @Slf4j
 public class StudentRegFormTestsNegative extends BaseTest {
@@ -28,7 +29,9 @@ public class StudentRegFormTestsNegative extends BaseTest {
         };
     }
 
-    @Test(dataProvider = "userWithMissingRequiredField")
+    @Test(dataProvider = "userWithMissingRequiredField",
+            description = "Student form validation empty required fields Test",
+            groups = {"student_form", "smoke", "negative"})
     public void addStudentInFormEmptyRequiredFields(String caseName, User user) {
         log.info("Start of the test: user without " + caseName);
         getPage().navigate(baseUrl);
@@ -46,11 +49,12 @@ public class StudentRegFormTestsNegative extends BaseTest {
         practiceFormPage.clickSubmit();
 
         Locator fieldWithErrors = practiceFormPage.getFormsWithErrors();
-        assertEquals(fieldWithErrors.count(), 1);
-        assertEquals(fieldWithErrors.getAttribute("placeholder"), caseName);
+        step("Verify validation error for empty required field", () -> assertEquals(fieldWithErrors.count(), 1));
+        step("Verify validated field name", () -> assertEquals(fieldWithErrors.getAttribute("placeholder"), caseName));
     }
 
-    @Test
+    @Test(description = "Student form validation no Gender selected",
+            groups = {"student_form", "smoke", "negative"})
     public void addStudentInFormEmptyGender() {
         log.info("Start of the test: user without Gender");
         getPage().navigate(baseUrl);
@@ -76,7 +80,7 @@ public class StudentRegFormTestsNegative extends BaseTest {
         practiceFormPage.selectCity(noGenderUser.city());
         practiceFormPage.clickSubmit();
 
-        assertTrue(practiceFormPage.isGenderRadioHasError());
+        step("Verify gender radio buttons highlighted", () -> assertTrue(practiceFormPage.isGenderRadioHasError()));
     }
 
 }

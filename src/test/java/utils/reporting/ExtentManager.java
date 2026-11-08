@@ -3,6 +3,7 @@ package utils.reporting;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+import com.aventstack.extentreports.reporter.configuration.ViewName;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -30,6 +31,16 @@ public class ExtentManager {
         htmlReporter.config().setDocumentTitle(reportName);
         htmlReporter.config().setEncoding("utf-8");
         htmlReporter.config().setReportName(reportName);
+
+        htmlReporter.viewConfigurer()
+                .viewOrder()
+                .as(new ViewName[]{
+                        ViewName.DASHBOARD,
+                        ViewName.TEST,
+                        ViewName.CATEGORY,
+                        ViewName.EXCEPTION
+                })
+                .apply();
 
         extentReports = new ExtentReports();
         extentReports.attachReporter(htmlReporter);

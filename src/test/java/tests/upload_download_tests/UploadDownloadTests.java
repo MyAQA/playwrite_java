@@ -15,13 +15,15 @@ import java.nio.file.Paths;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static utils.Constants.baseUrl;
+import static utils.reporting.ExtentSteps.step;
 
 @Slf4j
 public class UploadDownloadTests extends BaseTest {
 
-    @Test
+    @Test(description = "Download sample file Test",
+            groups = {"smoke", "files"})
     public void downloadSampleFile() throws IOException {
-        log.info("Start of the test.");
+        log.info("Download sample file Test START");
         getPage().navigate(baseUrl);
 
         LandingPage landingPage = new LandingPage(getPage());
@@ -32,11 +34,17 @@ public class UploadDownloadTests extends BaseTest {
         upDowPage.refreshPage();
 
         Path downloadedFile = upDowPage.clickDownload();
-        assertEquals(downloadedFile.getFileName().toString(), upDowPage.EXPECTED_DOWNLOAD_FILE_NAME);
-        assertTrue(Files.size(downloadedFile) > 0);
+
+        step("Verify downloaded file name: " + downloadedFile.getFileName().toString(),
+                () -> assertEquals(downloadedFile.getFileName().toString(), upDowPage.EXPECTED_DOWNLOAD_FILE_NAME));
+        long size = Files.size(downloadedFile);
+        step("Verify downloaded file size is greater than 0: " + size,
+                () -> assertTrue(size > 0));
     }
 
-    @Test public void uploadFileFromResources() throws URISyntaxException {
+    @Test(description = "Upload file Test",
+            groups = {"smoke", "files"})
+    public void uploadFileFromResources() throws URISyntaxException {
         log.info("Start of the test.");
         getPage().navigate(baseUrl);
 
@@ -49,6 +57,7 @@ public class UploadDownloadTests extends BaseTest {
         Path file = Paths.get(getClass().getClassLoader().getResource("files/upload-test.jpg").toURI());
         upDowPage.uploadFile(file);
 
-        assertEquals(upDowPage.getUploadedFilePath(), upDowPage.getExpectedUploadFilePath("upload-test.jpg"));
+        String expectedPath = upDowPage.getExpectedUploadFilePath("upload-test.jpg");
+        step("Verify uploaded file path", () -> assertEquals(upDowPage.getUploadedFilePath(), expectedPath));
     }
 }

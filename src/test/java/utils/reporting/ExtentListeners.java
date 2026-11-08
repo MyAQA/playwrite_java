@@ -7,10 +7,7 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
-import org.testng.ISuite;
-import org.testng.ISuiteListener;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
+import org.testng.*;
 
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -33,7 +30,10 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
 
     @Override
     public void onTestStart(ITestResult testResult) {
-        testReport.set(createTest(testResult));
+        ExtentTest test = createTest(testResult);
+        test.assignCategory(testResult.getMethod().getGroups());
+        testReport.set(test);
+        ExtentSteps.startTest(test);
     }
 
     @Override
@@ -50,8 +50,9 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
         String logText = "<b>" + "TEST CASE:- " + methodName.toUpperCase() + " FAILED" + "</b>";
         ExtentTest test = getOrCreateTest(testResult);
 
-        if (testResult.getThrowable() != null) {
-            test.fail(testResult.getThrowable());
+        Throwable t = testResult.getThrowable();
+        if (t != null && !ExtentSteps.isReported(t)) {
+            test.fail(t);
         }
 
         Markup m = MarkupHelper.createLabel(logText, ExtentColor.RED);
@@ -72,8 +73,11 @@ public class ExtentListeners implements ITestListener, ISuiteListener {
     }
 
     private static ExtentTest createTest(ITestResult testResult) {
-        return extentRep.createTest(testResult.getTestClass().getName()
-                + " @TestCase : " + testResult.getMethod().getMethodName());
+        ITestNGMethod method = testResult.getMethod();
+        String name = (method.getDescription() != null && !method.getDescription().isBlank())
+                ? method.getDescription()
+                : method.getMethodName();
+        return extentRep.createTest(" @TestCase : " + name);
     }
 
     private static ExtentTest getOrCreateTest(ITestResult testResult) {

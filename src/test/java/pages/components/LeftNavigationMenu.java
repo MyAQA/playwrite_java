@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import pages.PracticeFormPage;
 import pages.UploadDownloadPage;
 
+import static utils.reporting.ExtentSteps.step;
+
 @AllArgsConstructor
 public class LeftNavigationMenu {
 
@@ -20,20 +22,26 @@ public class LeftNavigationMenu {
     }
 
     public PracticeFormPage openPracticeForm() {
-        Locator practiceForm = page.locator(FORM_PRACTICE_FORM);
-        if (!practiceForm.isVisible()) {
-            expandGroup(MenuGroup.FORMS);
-        }
-        practiceForm.click();
+        step("Opening Practice Form", () -> {
+            Locator practiceForm = page.locator(FORM_PRACTICE_FORM);
+            if (!practiceForm.isVisible()) {
+                expandGroup(MenuGroup.FORMS);
+            }
+            practiceForm.click();
+        });
+
         return new PracticeFormPage(page);
     }
 
     public UploadDownloadPage openUploadDownloadPage() {
-        Locator uploadDownloadEl = page.locator(UPLOAD_DOWNLOAD_EL);
-        if(!uploadDownloadEl.isVisible()) {
-            expandGroup(MenuGroup.ELEMENTS);
-        }
-        uploadDownloadEl.click();
+        step("Opening Upload Download Form", () -> {
+            Locator uploadDownloadEl = page.locator(UPLOAD_DOWNLOAD_EL);
+            if (!uploadDownloadEl.isVisible()) {
+                expandGroup(MenuGroup.ELEMENTS);
+            }
+            uploadDownloadEl.click();
+        });
+
         return new UploadDownloadPage(page);
     }
 

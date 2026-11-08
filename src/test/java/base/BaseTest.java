@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 import utils.reporting.ExtentListeners;
+import utils.reporting.ExtentSteps;
 import utils.reporting.ScreenshotsUtil;
 
 @Slf4j
@@ -43,7 +44,10 @@ public class BaseTest {
         }
         BrowserContext context = browserThreadLocal.get().newContext(options);
         contextThreadLocal.set(context);
-        pageThreadLocal.set(context.newPage());
+
+        Page page = context.newPage();
+        pageThreadLocal.set(page);
+        ExtentSteps.setPage(page);
     }
 
     protected Page getPage() {
@@ -54,7 +58,9 @@ public class BaseTest {
     public void tearDownContext(ITestResult result) {
         Page page = pageThreadLocal.get();
 
-        if (result.getStatus() == ITestResult.FAILURE && page != null) {
+        boolean failed = result.getStatus() == ITestResult.FAILURE;
+
+        if (failed && page != null && !ExtentSteps.isReported(result.getThrowable())) {
             String testName = result.getMethod().getMethodName();
             log.error("Test Scenario: {} failed.", testName);
             try {

@@ -3,6 +3,8 @@ package pages;
 import com.microsoft.playwright.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import static utils.reporting.ExtentSteps.step;
+
 import java.nio.file.Path;
 
 @Slf4j
@@ -16,21 +18,22 @@ public class UploadDownloadPage extends BasePage {
     public static final String UPLOAD_BTN = "//input[@id='uploadFile']";
     private static final String UPLOADED_FILE_PATH = "//p[@id='uploadedFilePath']";
 
-    public UploadDownloadPage (Page page) {
+    public UploadDownloadPage(Page page) {
         super(page);
     }
 
     public Path clickDownload() {
         log.info("Downloading sample file");
-        return downloadFile(DOWNLOAD_BTN);
+        return step("Click on 'Download' button and starting downloading a file", () -> downloadFile(DOWNLOAD_BTN));
     }
+
     public void uploadFile(Path file) {
         log.info("Uploading file: {}", file.getFileName());
-        uploadFile(UPLOAD_BTN, file);
+        step("Uploading file: " + file.getFileName(), () -> uploadFile(UPLOAD_BTN, file));
     }
 
     public String getUploadedFilePath() {
-        return getText(UPLOADED_FILE_PATH);
+        return step("Reading uploaded file path", () -> getText(UPLOADED_FILE_PATH));
     }
 
     public String getExpectedUploadFilePath(String fileName) {
