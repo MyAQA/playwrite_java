@@ -9,11 +9,13 @@ import pages.PracticeFormPage;
 
 import static org.testng.AssertJUnit.*;
 import static utils.Constants.baseUrl;
+import static utils.reporting.ExtentSteps.step;
 
 @Slf4j
 public class StudentRegFormTestsPositive extends BaseTest {
 
-    @Test
+    @Test(description = "Student form validation no Gender selected",
+            groups = {"student_form", "smoke", "positive"})
     public void addStudentInFormFullData() {
         log.info("Start of the test.");
         getPage().navigate(baseUrl);
@@ -30,13 +32,14 @@ public class StudentRegFormTestsPositive extends BaseTest {
         practiceFormPage.fillInUserFormWithGivenObject(user1);
         practiceFormPage.clickSubmit();
 
-        assertEquals(practiceFormPage.getFormsWithErrors().count(), 0);
+        step("Verify validation error for empty required field are absent", () -> assertEquals(practiceFormPage.getFormsWithErrors().count(), 0));
         practiceFormPage.checkIfThanksModalAppeared();
 
     }
 
     // Intentionally failing test to demonstrate screenshots on failure.
-    @Test
+    @Test(description = "Student form validation no Gender selected",
+            groups = {"student_form", "smoke", "positive"})
     public void addStudentNoFirstNameExpectedFail() {
         log.info("Start of the test.");
         getPage().navigate(baseUrl);
@@ -53,8 +56,7 @@ public class StudentRegFormTestsPositive extends BaseTest {
         practiceFormPage.fillInUserFormWithGivenObject(noGenderUser);
         practiceFormPage.clickSubmit();
 
-        assertEquals(practiceFormPage.getFormsWithErrors().count(), 0);
-
+        step("Verify validation error for empty required field are absent", () -> assertEquals(practiceFormPage.getFormsWithErrors().count(), 0));
     }
 
 }
